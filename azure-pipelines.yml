@@ -27,3 +27,17 @@ steps:
     script: 'curl -sSL https://download.sourceclear.com/ci.sh | sh'
   env:
         SRCCLR_API_TOKEN: $(SCA_Token)
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    OverWrite: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+
