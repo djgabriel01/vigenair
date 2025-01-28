@@ -51,12 +51,12 @@ jobs:
       filepath: '$(build.artifactstagingdirectory)'
       maximumWaitTime: '360'
 
-- job: RunSonarScanner
-  pool: Sonarqube-qa-agent
-  steps:
-  - task: PowerShell@2
-    displayName: RunSonarScanner
-    inputs:
-      targetType: 'inline'
-      script: 'SonarQubeScanner -repoName ''$(Build.Repository.Name)'' -repoSource ''$(Build.Repository.Uri)'' -projectName ''$(System.TeamProject)'' -sonarQubeInstance ''Prod'''
+# - job: RunSonarScanner
+#   pool: Sonarqube-qa-agent
+#   steps:
+#   - task: PowerShell@2
+#     displayName: RunSonarScanner
+#     inputs:
+#       targetType: 'inline'
+#       script: 'SonarQubeScanner -repoName ''$(Build.Repository.Name)'' -repoSource ''$(Build.Repository.Uri)'' -projectName ''$(System.TeamProject)'' -sonarQubeInstance ''Prod'''
 
