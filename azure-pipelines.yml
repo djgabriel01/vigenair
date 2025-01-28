@@ -8,36 +8,44 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
+jobs:
+- job: Build
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+  - script: |
+      npm install
+      npm run build
+    displayName: 'npm install and build'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+  - task: Bash@3
+    displayName: 'Veracode_SCA_Scan_Linux'
+    inputs:
+      targetType: 'inline'
+      script: 'curl -sSL https://download.sourceclear.com/ci.sh | sh'
+    env:
+          SRCCLR_API_TOKEN: $(SCA_Token)
 
-- task: Bash@3
-  displayName: 'Veracode_SCA_Scan_Linux'
-  inputs:
-    targetType: 'inline'
-    script: 'curl -sSL https://download.sourceclear.com/ci.sh | sh'
-  env:
-        SRCCLR_API_TOKEN: $(SCA_Token)
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(agent.builddirectory)'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      OverWrite: true
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(agent.builddirectory)'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    OverWrite: true
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-
+- job: RunSonarScanner
+  pool: Sonarqube-qa-agent
+  steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: 'SonarQubeScanner -repoName ''$(Build.Repository.Name)'' -repoSource ''$(Build.Repository.Uri)'' -projectName ''$(System.TeamProject)'' -sonarQubeInstance ''Prod'''
 
