@@ -32,7 +32,9 @@ jobs:
   - task: CopyFiles@2
     inputs:
       SourceFolder: '$(agent.builddirectory)'
-      Contents: '**'
+      Contents: |
+        **
+        !*.mp4
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
       OverWrite: true
   - task: PublishBuildArtifacts@1
