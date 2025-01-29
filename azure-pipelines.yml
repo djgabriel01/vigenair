@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: linux-prod
+  vmImage: ubuntu-latest
 jobs:
 - job: Build
   steps:
@@ -43,15 +43,6 @@ jobs:
       ArtifactName: 'drop'
       publishLocation: 'Container'
 
-  - task: Veracode@3
-    inputs:
-      ConnectionDetailsSelection: 'Credentials'
-      apiId: $(API_ID)
-      apiKey: $(API_Key)
-      veracodeAppProfile: 'vigenair'
-      version: '$(build.buildNumber)'
-      filepath: '$(build.artifactstagingdirectory)'
-      maximumWaitTime: '360'
 
 # - job: RunSonarScanner
 #   pool: Sonarqube-qa-agent
